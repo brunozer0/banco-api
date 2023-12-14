@@ -26,6 +26,7 @@ public class AccountService {
     }
 
     public Optional<Account> getAccountById(Long id) {
+
         return accountDao.get(id);
     }
 
@@ -34,6 +35,9 @@ public class AccountService {
 
         Optional<User> titularOptional = userDao.get(titularId);
 
+        if(titularId == null) {
+            throw new TitularNotFoundException("Titular não encontrado.");
+        }
 
         User titular = titularOptional.get();
 
@@ -58,11 +62,16 @@ public class AccountService {
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             double currentBalance = account.getSaldo();
+
+            if (account.getTipoConta() == Account.TipoContaEnum.CONTA_POUPANCA) {
+                double taxa = 0.005;
+                double taxaCobrada = valorDeposito * taxa;
+                valorDeposito -= taxaCobrada;
+            }
             account.setSaldo(currentBalance + valorDeposito);
             accountDao.update(account);
-        } else {
-            // Lida com a situação em que a conta não foi encontrada
         }
+
     }
 
 
@@ -74,11 +83,8 @@ public class AccountService {
             double currentBalance = account.getSaldo();
             account.setSaldo(currentBalance - valorsaque);
             accountDao.update(account);
-        } else {
-            // Lida com a situação em que a conta não foi encontrada
         }
     }
-
 
 
 

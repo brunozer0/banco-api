@@ -60,9 +60,8 @@ public class AccountController {
         return Response.ok("Saque realizado com sucesso").build();
     }
 
-
     @DELETE
-    @Path("/{id}")
+    @Path("/{id}/delete")
     public Response deleteAccount(@PathParam("id") Long id) {
         accountService.deleteAccount(id);
         return Response.ok("conta deletada!").build();
