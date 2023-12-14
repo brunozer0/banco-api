@@ -1,7 +1,9 @@
 package br.com.application.service;
 
 import br.com.application.persistence.dao.UserDao;
+import br.com.application.persistence.dto.AccountDto;
 import br.com.application.persistence.dto.UserDto;
+import br.com.application.persistence.model.Account;
 import br.com.application.persistence.model.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -31,5 +33,28 @@ public class UserService {
 
     public Optional<User> getUser(Long id){
         return this.userDao.get(id);
+    }
+
+
+    public void deleteUser(Long id) {
+
+
+        userDao.get(id).ifPresent(userDao::delete);
+    }
+
+
+    public void updateUser(Long id, UserDto userData) {
+        Optional<User> existingUser = userDao.get(id);
+
+        if(existingUser.isPresent()){
+            User user = existingUser.get();
+
+            user.setName(userData.getName());
+            user.setIdade(userData.getAge());
+            user.setPhone(userData.getPhone());
+            user.setAdress(userData.getAdress());
+            userDao.update(user);
+        }
+
     }
 }

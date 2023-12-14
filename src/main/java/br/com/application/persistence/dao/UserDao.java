@@ -1,5 +1,6 @@
 package br.com.application.persistence.dao;
 
+import br.com.application.persistence.model.Account;
 import br.com.application.persistence.model.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -54,7 +55,12 @@ public class UserDao implements Dao<User> {
     }
 
     @Override
+    @Transactional
     public void delete(User user) {
+        if (!em.contains(user)) {
 
+            user = em.find(User.class, user.getId());
+        }
+        em.remove(user);
     }
 }

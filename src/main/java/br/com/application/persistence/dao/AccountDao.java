@@ -47,7 +47,6 @@ public class AccountDao implements Dao<Account> {
     @Transactional
     public void delete(Account account) {
         if (!em.contains(account)) {
-
             account = em.find(Account.class, account.getId());
         }
         em.remove(account);

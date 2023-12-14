@@ -30,32 +30,22 @@ public class AccountService {
         return accountDao.get(id);
     }
 
-    public void createAccount(AccountDto accountData) throws TitularNotFoundException {
+    public void createAccount(AccountDto accountData) {
         Long titularId = accountData.getTitularId();
 
         Optional<User> titularOptional = userDao.get(titularId);
 
-        if(titularId == null) {
-            throw new TitularNotFoundException("Titular não encontrado.");
+        if(titularOptional.isPresent()) {
+            User titular = titularOptional.get();
+
+            Account account = new Account();
+            account.setTipoConta(accountData.getTipoConta());
+            account.setTitular(titular);
+            accountDao.save(account);
         }
 
-        User titular = titularOptional.get();
-
-        Account account = new Account();
-        account.setTipoConta(accountData.getTipoConta());
-        account.setTitular(titular);
-        accountDao.save(account);
     }
 
-    public void updateAccount(Long id, AccountDto accountData) {
-        Optional<Account> existingAccount = accountDao.get(id);
-        existingAccount.ifPresent(account -> {
-            account.setTipoConta(accountData.getTipoConta());
-
-
-            accountDao.update(account);
-        });
-    }
     public void deposito(Long id, Double valorDeposito) {
         Optional<Account> optionalAccount = accountDao.get(id);
 
