@@ -11,9 +11,8 @@ import org.hibernate.validator.constraints.Length;
 public class UserDto {
 
     @NotBlank(message = "name cannot be null")
-
-
     String name;
+
     Integer age;
     private String phone;
     private String adress;

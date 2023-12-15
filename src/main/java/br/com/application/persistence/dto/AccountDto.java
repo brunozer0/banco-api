@@ -21,11 +21,4 @@ public class AccountDto {
 
     private Double saldo;
 
-    public AccountDto(Account.TipoContaEnum tipoConta, Long titularId, Double saldo, UserDto accountData) {
-        this.tipoConta = tipoConta;
-        this.titularId = titularId;
-        this.saldo = saldo;
-        this.accountData = accountData;
-    }
-
 }

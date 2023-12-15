@@ -22,8 +22,6 @@ public class UserController {
     @GET
     @Path("/{id}")
     public Response getUser(@PathParam("id") Long id){
-//e
-
         Optional<User> userOptional = this.service.getUser(id);
 
         if (userOptional.isPresent()) {
@@ -52,23 +50,27 @@ public class UserController {
     @Transactional
     @Path("/{id}")
     public Response updateUser(@PathParam("id") Long id, @Valid UserDto userData)  {
-        if(id == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        Optional<User> userOptional = service.getUser(id);
+
+        if (userOptional.isPresent()) {
+            service.updateUser(id, userData);
+            return Response.ok("Usuário atualizado!").build();
+        } else {
+           return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        service.updateUser(id, userData);
-        return Response.ok("Usuário atualizado!").build();
     }
 
 
     @DELETE
     @Path("/{id}/delete")
-    public Response deleteAccount(@PathParam("id") Long id) {
+    public Response deleteUser(@PathParam("id") Long id) {
         Optional<User> userOptional = this.service.getUser(id);
+
         if(userOptional.isPresent()){
             service.deleteUser(id);
             return Response.ok("Usuário deletado!").build();
+        }else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Id não existe").build();
         }
-
-        return Response.status(Response.Status.NOT_FOUND).entity("ID Usuário não existe").build();
     }
 }

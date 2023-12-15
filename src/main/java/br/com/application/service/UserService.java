@@ -38,23 +38,22 @@ public class UserService {
 
     public void deleteUser(Long id) {
 
-
         userDao.get(id).ifPresent(userDao::delete);
     }
 
 
     public void updateUser(Long id, UserDto userData) {
         Optional<User> existingUser = userDao.get(id);
+        User user = existingUser.get();
 
         if(existingUser.isPresent()){
-            User user = existingUser.get();
 
             user.setName(userData.getName());
             user.setIdade(userData.getAge());
             user.setPhone(userData.getPhone());
             user.setAdress(userData.getAdress());
-            userDao.update(user);
         }
+        userDao.update(user);
 
     }
 }

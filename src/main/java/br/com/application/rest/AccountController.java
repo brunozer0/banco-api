@@ -5,6 +5,7 @@ import br.com.application.persistence.dto.AccountDto;
 import br.com.application.persistence.dto.DepositDto;
 import br.com.application.persistence.dto.SaqueDto;
 import br.com.application.persistence.model.Account;
+import br.com.application.persistence.model.User;
 import br.com.application.service.AccountService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.Optional;
 
 @Path("v1/accounts")
 
@@ -43,10 +45,13 @@ public class AccountController {
     }
 
 
-
     @PATCH
     @Path("/{id}/deposit")
     public Response deposit(@PathParam("id") Long id, DepositDto deposito) {
+        Optional<Account> accountOptional = this.accountService.getAccountById(id);
+        if(!accountOptional.isPresent()) {
+           return Response.status(Response.Status.NOT_FOUND).entity("Id não existe").build();
+        }
         accountService.deposito(id, deposito.getValor());
         return Response.ok("Depósito realizado com sucesso").build();
     }
@@ -54,14 +59,31 @@ public class AccountController {
     @PATCH
     @Path("/{id}/withdraw")
     public Response saque(@PathParam("id") Long id, SaqueDto saque) {
-        accountService.saque(id, saque.getSaque());
-        return Response.ok("Saque realizado com sucesso").build();
+        Optional<Account> accountOptional = this.accountService.getAccountById(id);
+
+        if(accountOptional.isPresent()){
+            Account account = accountOptional.get();
+            double currentBalance = account.getSaldo();
+            if(currentBalance >0){
+                accountService.saque(id, saque.getSaque());
+                return Response.ok("Saque realizado com sucesso").build();
+            }
+        }
+            return Response.status(Response.Status.BAD_REQUEST).entity("Saldo insuficiente").build();
+
     }
 
     @DELETE
     @Path("/{id}/delete")
     public Response deleteAccount(@PathParam("id") Long id) {
-        accountService.deleteAccount(id);
-        return Response.ok("conta deletada!").build();
+        Optional<Account> accountOptional = this.accountService.getAccountById(id);
+
+        if(accountOptional.isPresent()){
+            accountService.deleteAccount(id);
+            return Response.ok("Conta deletada!").build();
+        }else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Id Conta não existe").build();
+        }
+
     }
 }
