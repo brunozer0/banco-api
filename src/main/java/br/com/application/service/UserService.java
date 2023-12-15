@@ -1,5 +1,6 @@
 package br.com.application.service;
 
+import br.com.application.persistence.dao.AccountDao;
 import br.com.application.persistence.dao.UserDao;
 import br.com.application.persistence.dto.AccountDto;
 import br.com.application.persistence.dto.UserDto;
@@ -16,6 +17,9 @@ public class UserService {
 
     @Inject
     UserDao userDao;
+
+    @Inject
+    AccountDao accountDao;
     public void addUser(UserDto userData) {
 
         User user = new User();
@@ -37,6 +41,7 @@ public class UserService {
 
 
     public void deleteUser(Long id) {
+        Optional<Account> existingAccount = accountDao.get(id);
 
         userDao.get(id).ifPresent(userDao::delete);
     }
@@ -44,6 +49,8 @@ public class UserService {
 
     public void updateUser(Long id, UserDto userData) {
         Optional<User> existingUser = userDao.get(id);
+
+
         User user = existingUser.get();
 
         if(existingUser.isPresent()){

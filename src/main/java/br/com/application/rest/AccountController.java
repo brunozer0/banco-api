@@ -61,16 +61,17 @@ public class AccountController {
     public Response saque(@PathParam("id") Long id, SaqueDto saque) {
         Optional<Account> accountOptional = this.accountService.getAccountById(id);
 
-        if(accountOptional.isPresent()){
-            Account account = accountOptional.get();
-            double currentBalance = account.getSaldo();
-            if(currentBalance >0){
-                accountService.saque(id, saque.getSaque());
-                return Response.ok("Saque realizado com sucesso").build();
-            }
+        if(!accountOptional.isPresent()){
+            return Response.status(Response.Status.NOT_FOUND).entity("Id conta não existe").build();
         }
-            return Response.status(Response.Status.BAD_REQUEST).entity("Saldo insuficiente").build();
+        Account account = accountOptional.get();
+        double currentBalance = account.getSaldo();
 
+        if(currentBalance <=0){
+            return Response.status(Response.Status.BAD_REQUEST).entity("Saldo insuficiente").build();
+        }
+        accountService.saque(id, saque.getSaque());
+        return Response.ok("Saque realizado com sucesso").build();
     }
 
     @DELETE
@@ -78,12 +79,10 @@ public class AccountController {
     public Response deleteAccount(@PathParam("id") Long id) {
         Optional<Account> accountOptional = this.accountService.getAccountById(id);
 
-        if(accountOptional.isPresent()){
-            accountService.deleteAccount(id);
-            return Response.ok("Conta deletada!").build();
-        }else {
+        if(!accountOptional.isPresent()){
             return Response.status(Response.Status.NOT_FOUND).entity("Id Conta não existe").build();
         }
-
+        accountService.deleteAccount(id);
+        return Response.ok("Conta deletada!").build();
     }
 }

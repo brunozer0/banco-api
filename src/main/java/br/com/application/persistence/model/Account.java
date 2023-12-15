@@ -15,7 +15,7 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private TipoContaEnum tipoConta;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "usuario_id")
     private User titular;
 
